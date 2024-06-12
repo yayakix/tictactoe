@@ -39,10 +39,6 @@ const checkRows = (b: typeof board) => {
     }
   }
 };
-// console.log(checkRows(board));
-
-// check top to botttom
-// check if arr[0] x3 , arr[1] x3, arr[2] x3 of each row are matching
 
 const checkColumns = (b) => {
   const checkMatchColumns = (b, i) => {
@@ -88,7 +84,7 @@ const checkDiagonals = (b) => {
 //   checkDiagonals(b);
 //   checkColumns(b);
 // };
-const didSomeoneWin = (b) => {
+export const didSomeoneWin = (b) => {
   if (checkRows(b) == true) {
     return true;
   } else if (checkDiagonals(b) == true) {
@@ -99,5 +95,3 @@ const didSomeoneWin = (b) => {
     return false;
   }
 };
-
-console.log("Somone won:", didSomeoneWin(board));
