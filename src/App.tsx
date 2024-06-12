@@ -1,99 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { MouseEvent, useEffect, useState } from 'react'
 import './App.css'
-import { didSomeoneWin } from ".././index"
+import { Board, Cell, checkBoardForOutcome } from './game'
 
 function App() {
-  const [count, setCount] = useState(0)
-  const numberboard = [
-    ['1', '2', '3'],
-    ['4', '5', '6'],
-    ['7', '8', '9'],
-  ]
-  const map = {
-    1: { index1: 0, index2: 0 },
-    4: { index1: 0, index2: 1 },
-    7: { index1: 0, index2: 2 },
-    2: { index1: 1, index2: 0 },
-    5: { index1: 1, index2: 1 },
-    8: { index1: 1, index2: 2 },
-    3: { index1: 2, index2: 0 },
-    6: { index1: 2, index2: 1 },
-    9: { index1: 2, index2: 2, }
+  const [currentPlayer, setCurrentPlayer] = useState<Cell>('x')
+  const [board, setBoard] = useState<Board>(["", "", "", "", "", "", "", "", ""])
+  const [outcome, setOutcome] = useState<'x' | 'o' | 'draw' | null>(null)
+
+  useEffect(
+    () => {
+      const outcome = checkBoardForOutcome(board)
+      console.log(outcome)
+      if (outcome.winner && outcome.winner == "x") setOutcome('x')
+      if (outcome.winner && outcome.winner == "o") setOutcome('o')
+      if (outcome.outcome == "draw") setOutcome('draw')
+    }, [board]
+  )
+
+  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (e.currentTarget.innerHTML !== "") return
+    if (outcome) return
+
+    const targetSpot = parseInt(e.currentTarget.id)
+    let newBoard: Board = [...board]
+    newBoard[targetSpot] = currentPlayer
+    setBoard(newBoard)
+
+    if (currentPlayer == 'x') setCurrentPlayer('o')
+    else if (currentPlayer == 'o') setCurrentPlayer('x')
   }
-  const blankboard = [
-    ['', '', ''],
-    ['', '', ''],
-    ['', '', ''],
-  ]
-  const [turn, setTurn] = useState(true)
-  const [board, setBoard] = useState(blankboard)
-  const [gameOn, setGameOn] = useState(true)
-  const [winner, setWinner] = useState('')
 
-  const handleClick = (e) => {
-    const targetSpot = e.target.id
-    if (turn) {
-      console.log('board before', board)
-      let copy = [...board]
-      copy[map[targetSpot].index1][map[targetSpot].index2] = 'X'
-      setBoard(copy)
-      // blankboard[map[targetSpot].index1][map[targetSpot].index2] = 'X'
-      e.target.innerHTML = 'X'
-    } else {
-      // blankboard[map[targetSpot].index1][map[targetSpot].index2] = 'O'
-      let copy = [...board]
-      copy[map[targetSpot].index1][map[targetSpot].index2] = 'O'
-      e.target.innerHTML = 'O'
-    }
-    const val = didSomeoneWin(board)
-
-    if (val) {
-      setGameOn(false)
-      if (turn) {
-        setWinner('X')
-
-      } else {
-        setWinner('O')
-
-      }
-    }
-
-    console.log(val)
-    setTurn(!turn)
-    // set piece on the board
-    console.log(blankboard)
-    console.log(board)
-
-
-
-    // check if there is a win on the board
-    // change turn if game is still continuing
-    // end game if there is a winner or the board is ful
-  }
   return (
     <>
-
-      {gameOn && <>         <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-        <button onClick={() => {
-          setTurn(!turn)
-        }}>Turn {turn ? <>X</> : <>O</>}</button>
-        {/* turn true = x, turn false = o */}
-        <div className='grid grid-cols-3 bg-blue-200 gap-4 w-72'>
-          {numberboard.map((x) => {
-            return <div className='m-4 p-4'>{x.map((num) => {
-              return <div id={num} className='gap-4' onClick={(e) => {
-                handleClick(e)
-              }}>_</div>
-            })} </div>
-          })}
-
+      {<>
+        <h1 className="text-3xl font-bold underline mb-10">
+          Tic Tac Toe
+        </h1>
+        <div className='flex justify-center items-center '>
+          <div className='grid grid-cols-3 mb-10'>
+            {board.map((cell, index) => <div key={index} id={index.toString()} className=' box-content min-h-16 min-w-16 border-4 flex justify-center items-center text-6xl gap-4' onClick={handleClick}>{cell}</div>)}
+          </div>
         </div></>
       }
-      {!gameOn && <h1>Game Over : {winner} wins</h1>}
+      {outcome && <h2 className=''>Game Over : {outcome} wins
+        <br></br>
+        <button className='mt-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow' onClick={() => {
+          window.location.reload()
+        }}>Restart</button>
+      </h2>}
+
 
     </>
   )
