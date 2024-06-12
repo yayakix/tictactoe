@@ -5,7 +5,6 @@ import './App.css'
 import { didSomeoneWin } from ".././index"
 
 function App() {
-  const [count, setCount] = useState(0)
   const numberboard = [
     ['1', '2', '3'],
     ['4', '5', '6'],
@@ -74,20 +73,20 @@ function App() {
   }
   return (
     <>
-
-      {gameOn && <>         <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
+      {gameOn && <>
+        <h1 className="text-3xl font-bold underline">
+          Tic Tac Toe
+        </h1>
         <button onClick={() => {
           setTurn(!turn)
         }}>Turn {turn ? <>X</> : <>O</>}</button>
         {/* turn true = x, turn false = o */}
-        <div className='grid grid-cols-3 bg-blue-200 gap-4 w-72'>
+        <div className='grid grid-cols-3 '>
           {numberboard.map((x) => {
             return <div className='m-4 p-4'>{x.map((num) => {
-              return <div id={num} className='gap-4' onClick={(e) => {
+              return <div id={num} className=' box-content w-48 h-48 min-h-16 min-w-16 border-4 flex justify-center items-center text-6xl gap-4' onClick={(e) => {
                 handleClick(e)
-              }}>_</div>
+              }}></div>
             })} </div>
           })}
 
